@@ -36,6 +36,7 @@ class CalculationType(str, Enum):
     SUBTRACTION = "subtraction"
     MULTIPLICATION = "multiplication"
     DIVISION = "division"
+    MODULUS = "modulus"  # Added modulus as a valid calculation type
 
 class CalculationBase(BaseModel):
     """
@@ -49,7 +50,7 @@ class CalculationBase(BaseModel):
     """
     type: CalculationType = Field(
         ...,  # The ... means this field is required
-        description="Type of calculation (addition, subtraction, multiplication, division)",
+        description="Type of calculation (addition, subtraction, multiplication, division, modulus)",
         example="addition"
     )
     inputs: List[float] = Field(
@@ -140,7 +141,8 @@ class CalculationBase(BaseModel):
         json_schema_extra={
             "examples": [
                 {"type": "addition", "inputs": [10.5, 3, 2]},
-                {"type": "division", "inputs": [100, 2]}
+                {"type": "division", "inputs": [100, 2]},
+                {"type": "modulus", "inputs": [10, 3]}  
             ]
         }
     )

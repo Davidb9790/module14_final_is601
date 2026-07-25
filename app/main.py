@@ -295,6 +295,12 @@ def create_calculation(
             detail=str(e)
         )
 
+    except ZeroDivisionError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot perform modulus by zero."
+        )
 
 # Browse / List Calculations
 @app.get("/calculations", response_model=List[CalculationResponse], tags=["calculations"])

@@ -7,6 +7,7 @@ from app.models.calculation import (
     Subtraction,
     Multiplication,
     Division,
+    Modulus,
 )
 
 # Helper function to create a dummy user_id for testing.
@@ -117,12 +118,9 @@ def test_calculation_factory_division():
     assert calc.get_result() == 10, "Incorrect division result."
 
 def test_calculation_factory_invalid_type():
-    """
-    Test that Calculation.create raises a ValueError for an unsupported calculation type.
-    """
     with pytest.raises(ValueError, match="Unsupported calculation type"):
         Calculation.create(
-            calculation_type='modulus',  # unsupported type
+            calculation_type='unknown_type',
             user_id=dummy_user_id(),
             inputs=[10, 3],
         )
@@ -150,3 +148,42 @@ def test_invalid_inputs_for_division():
     division = Division(user_id=dummy_user_id(), inputs=[10])
     with pytest.raises(ValueError, match="Inputs must be a list with at least two numbers."):
         division.get_result()
+# MODULUS OPEN---------------------------------------------------------------------------Modulus Calculation Test
+def test_calculation_factory_modulus():
+    inputs = [100, 30, 4]
+    calc = Calculation.create(
+        calculation_type='modulus',
+        user_id=dummy_user_id(),
+        inputs=inputs,
+    )
+    assert calc.get_result() == 2, "Incorrect modulus result."
+
+def test_modulus_get_result():
+    """
+    Test that Modulus.get_result returns the correct remainder.
+    """
+
+    inputs = [100, 30, 4]
+    modulus = Modulus(user_id=dummy_user_id(), inputs=inputs)
+    result = modulus.get_result()
+    assert result == 2, f"Expected 2, got {result}"
+
+def test_modulus_by_zero():
+    """
+    Test that Modulus.get_result raises ValueError when modulus by zero occurs.
+    """
+
+    inputs = [10, 0]
+    modulus = Modulus(user_id=dummy_user_id(), inputs=inputs)
+    with pytest.raises(ValueError, match="Cannot perform modulus by zero"):
+        modulus.get_result()
+
+def test_invalid_inputs_for_modulus():
+    """
+    Test that providing fewer than two numbers to Modulus.get_result raises a ValueError.
+    """
+
+    modulus = Modulus(user_id=dummy_user_id(), inputs=[10])
+    with pytest.raises(ValueError, match="Inputs must be a list with at least two numbers."):
+        modulus.get_result()
+

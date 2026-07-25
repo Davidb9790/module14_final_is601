@@ -19,6 +19,30 @@ def test_calculation_create_valid():
     assert calc.type == "addition"
     assert calc.inputs == [10.5, 3.0]
     assert calc.user_id is not None
+# MODULUS OPEN---------------------------------------------------------------------------Modulus Calculation Test
+def test_calculation_create_modulus():
+    """Test creating a valid CalculationCreate schema with modulus."""
+    data = {
+        "type": "modulus",
+        "inputs": [100, 30, 4],
+        "user_id": uuid4()
+    }
+    calc = CalculationCreate(**data)
+    assert calc.type == "modulus"
+    assert calc.inputs == [100, 30, 4]
+
+def test_calculation_create_modulus_by_zero():
+    """Modulus-by-zero should pass schema validation; error occurs at model level."""
+    data = {
+        "type": "modulus",
+        "inputs": [10, 0],
+        "user_id": uuid4()
+    }
+    calc = CalculationCreate(**data)
+    assert calc.type == "modulus"
+    assert calc.inputs == [10, 0]
+
+# MODULUS CLOSE---------------------------------------------------------------------------Modulus Calculation Test
 
 def test_calculation_create_missing_type():
     """Test CalculationCreate fails if 'type' is missing."""

@@ -118,3 +118,22 @@ def divide(a: Number, b: Number) -> float:
     # Perform division of a by b and return the result as a float
     result = a / b
     return result
+# MODULUS OPEN---------------------------------------------------------------------------Modulus Calculation Function
+def modulus(a: Number, b: Number) -> Number:
+    """
+    Perform modulus (remainder) operation.
+
+    Parameters:
+    - a (int or float): The dividend.
+    - b (int or float): The divisor.
+
+    Returns:
+    - int or float: The remainder of a % b.
+
+    Raises:
+    - ValueError: If b is zero, as modulus by zero is undefined.
+    """
+    if b == 0:
+        raise ValueError("Cannot perform modulus by zero.")
+    return a % b
+# MODULUS CLOSE---------------------------------------------------------------------------Modulus Calculation Function

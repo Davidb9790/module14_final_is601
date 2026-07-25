@@ -229,6 +229,53 @@ def test_create_calculation_division(base_url: str):
     # Expected result: 100 / 2 / 5 = 10
     assert "result" in data and data["result"] == 10, f"Expected result 10, got {data.get('result')}"
 
+# MODULUS OPEN---------------------------------------------------------------------------Modulus Calculation Test
+def test_create_calculation_modulus(base_url: str):
+    user_data = {
+        "first_name": "Calc",
+        "last_name": "Modder",
+        "email": f"calc.mod{uuid4()}@example.com",
+        "username": f"calc_mod_{uuid4()}",
+        "password": "SecurePass123!",
+        "confirm_password": "SecurePass123!"
+    }
+    token_data = register_and_login(base_url, user_data)
+    access_token = token_data["access_token"]
+    headers = {"Authorization": f"Bearer {access_token}"}
+    url = f"{base_url}/calculations"
+    payload = {
+        "type": "modulus",
+        "inputs": [100, 30, 4],
+        "user_id": "ignored"
+    }
+    response = requests.post(url, json=payload, headers=headers)
+    assert response.status_code == 201, f"Modulus calculation creation failed: {response.text}"
+    data = response.json()
+    assert data["result"] == 2, f"Expected result 2, got {data.get('result')}"
+
+def test_create_calculation_modulus_by_zero(base_url: str):
+    user_data = {
+        "first_name": "Calc",
+        "last_name": "ModZero",
+        "email": f"calc.modzero{uuid4()}@example.com",
+        "username": f"calc_modzero_{uuid4()}",
+        "password": "SecurePass123!",
+        "confirm_password": "SecurePass123!"
+    }
+    token_data = register_and_login(base_url, user_data)
+    access_token = token_data["access_token"]
+    headers = {"Authorization": f"Bearer {access_token}"}
+    url = f"{base_url}/calculations"
+    payload = {
+        "type": "modulus",
+        "inputs": [10, 0],
+        "user_id": "ignored"
+    }
+    response = requests.post(url, json=payload, headers=headers)
+    assert response.status_code == 400, f"Expected 400 for modulus by zero, got {response.status_code}"
+    assert "Cannot perform modulus by zero" in response.text
+# MODULUS CLOSE---------------------------------------------------------------------------
+
 def test_list_get_update_delete_calculation(base_url: str):
     user_data = {
         "first_name": "Calc",
@@ -313,7 +360,19 @@ def test_model_division():
     calc = Calculation.create("division", dummy_user_id, [100, 2, 5])
     result = calc.get_result()
     assert result == 10, f"Division result incorrect: expected 10, got {result}"
-    
+# MODULUS OPEN: Test for division by zero is already handled in test_model_modulus_by_zero
+def test_model_modulus():
+    dummy_user_id = uuid4()
+    calc = Calculation.create("modulus", dummy_user_id, [100, 30, 4])
+    result = calc.get_result()
+    assert result == 2, f"Modulus result incorrect: expected 2, got {result}"
+
+def test_model_modulus_by_zero():
+    dummy_user_id = uuid4()
+    with pytest.raises(ValueError):
+        calc = Calculation.create("modulus", dummy_user_id, [10, 0])
+        calc.get_result()
+# MODULUS CLOSE 
     # Test division by zero error
     with pytest.raises(ValueError):
         calc_zero = Calculation.create("division", dummy_user_id, [100, 0])
