@@ -99,8 +99,8 @@ jobs:
         with:
           push: true
           tags: |
-            davidb9790/module14_is601:latest
-            davidb9790/module14_is601:${{ github.sha }}
+            davidb9790/module14_final_is601:latest
+            davidb9790/module14_final_is601:${{ github.sha }}
           platforms: linux/amd64,linux/arm64
-          cache-from: type=registry,ref=davidb9790/module14_is601:cache
+          cache-from: type=registry,ref=davidb9790/module14_final_is601:cache
           cache-to: type=inline,mode=max
