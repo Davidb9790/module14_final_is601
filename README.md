@@ -1,94 +1,138 @@
+## MODULE 14
+   This project extends the existing FastAPI calculator application by implementing a new calculation feature: Modulus (%).
+   The feature includes backend logic, database integration, UI updates, and full test coverage (unit, integration, and Playwright E2E).
+   A complete CI/CD pipeline builds, tests, scans, and deploys the application to Docker Hub.
+
+## 🔧 Implemented Feature: Modulus (%) Operation
+   ✔ Backend
+      Added modulus logic to the calculation service
+      Updated FastAPI route to support the new operation
+      Updated Pydantic schemas to validate modulus input
+      Stored modulus results in PostgreSQL
+      Included error handling for invalid input (non‑numeric values, empty fields)
+
+   ✔ Front-End
+      Added “Modulus %” to the operation dropdown
+      Updated dashboard UI to display modulus results
+      Added error and success alerts
+      Updated history table to show modulus calculations
+      Client-side validation for malformed input
+
+   ✔ Testing
+      Unit Tests: modulus logic, input parsing, error handling
+      Integration Tests: FastAPI route, DB persistence, history retrieval
+      E2E Tests (Playwright):
+      modulus with two numbers
+      modulus with three numbers
+      invalid input
+      history updates
+
+      all other operations (addition, subtraction, multiplication, division)
+
+   ✔ Database Migrations
+      This feature did not require schema changes, so no Alembic migrations were needed.
+
 # 📦 Project Setup
    Clone
-   git clone https://github.com/davidb9790/module14_is601.git cd module12_is601_v2
+   git clone https://github.com/davidb9790/module14_is601.git
+   cd module14_is601
 
-   Create Virtual Environment
-   python -m venv venv source venv/bin/activate
 
-   Install Dependencies
+#   Create Virtual Environment
+   python3 -m venv venv
+   source venv/bin/activate   # Mac/Linux
+   venv\Scripts\activate.bat  # Windows
+
+---
+## Install Dependencies
    pip install -r requirements.txt
 
-   Running the Application
-   python3 main.py
-
-   API will be available at: http://localhost:8000
----
-## Install Playwright browsers
-   python -m playwright install
-
-
----
-
-## Build Docker Image
-
-      docker compose up --build
+## Start FastAPI
+   uvicorn app.main:app --reload
    
-   If the DB for PgAdmin does not create the tables try:
-      Docker compose down -v
-      Docker compose up --build
+   API will be available at:
+   http://localhost:8000
+
+## Database Setup
+   docker compose up --build
+
+   If PgAdmin tables do not appear:
+      docker compose down -v
+      docker compose up --build
+
+
+## Running Test Locally
+   Unit Test
+      pytest tests/unit
+
+   Integration Test
+      pytest tests/integration/
+
+   E2E Test
+      Install browsers first:
+      python -m playwright install
+
+      pytest tests/e2e/
+
 
 ---
 
 #  CI/CD Pipeline (GitHub Actions)
 
-   Your GitHub Actions workflow:
+   The GitHub Actions workflow for this project provides a full CI/CD pipeline that automatically tests, builds, scans, and deploys the application.
 
-   Spins up PostgreSQL (or SQLite depending on your setup)
+   What the pipeline does
+   Spins up a PostgreSQL service for testing
 
-   Builds the FastAPI app
+   Installs project dependencies
 
-   Installs Playwright + browsers
+   Installs Playwright and required browsers
 
-   Runs all E2E tests
+   Starts the FastAPI application
 
-   If tests pass:
+   Runs all unit, integration, and E2E tests
 
-   Builds Docker image
+   If all tests pass:
+
+   Builds the Docker image
 
    Logs into Docker Hub
 
-   Pushes the image
+   Pushes the image to the Docker Hub repository
 
-   Required GitHub Secrets
-   Add these in Settings → Secrets → Actions:
+   Runs a Trivy security scan on the built image
+
+   🔐 Required GitHub Secrets
+   Add these under:
+
+   GitHub → Repository → Settings → Secrets and Variables → Actions
 
    DOCKERHUB_USERNAME
-      Create a repository in Docker Hub: username is simple 
+      Your Docker Hub username
+      Must match the account that owns the repository
+
    DOCKERHUB_TOKEN
-      Token must be created via Personal Access Tokens
-      Generate new token
-         Insert name of token
-         Access Permissions
-            Read & Write
-   
-   In Github: at the matching repository
-   Settings> Secrets and Variables> Actions> New Repository Secret
-      DOCKERHUB_USERNAME: Enter your username
-      DOCKERHUB_TOKEN: Enter token created in Docker Hub
+      Create this in Docker Hub under
+      Account Settings → Security → Personal Access Tokens
+      Steps:
+         Generate a new token
+         Give it Read & Write permissions
+         Copy the token and save it as the GitHub secret
+ 
+
+   Adding the secrets in GitHub
+      Go to your repository
+      Open Settings → Secrets and Variables → Actions
+      Click New Repository Secret
+
+   Add:
+
+   DOCKERHUB_USERNAME
+   DOCKERHUB_TOKEN
+
+   Once these are set, the pipeline will automatically:
+   run tests on every push or pull request to main
+   build and push the Docker image only when tests pass
 
 
 ---
-
-## Create and Activate a Virtual Environment
-
-   (Optional but recommended)
-
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate   # Mac/Linux
-   venv\Scripts\activate.bat  # Windows
-   ```
----
-
-# 🧩 Running The Application
-   To start the application locally, install the required dependencies and run the FastAPI server. Make sure you have Python and Docker installed. After installing dependencies, start the backend with uvicorn and open the front end in your browser. If you are using Docker, you can run the application using the provided Dockerfile or docker compose file.
-
-
----
-
-
-# Running Tests Locally
-T  his project includes unit tests, integration tests, and Playwright end to end tests. Unit and integration tests can be executed with pytest. End to end tests require Playwright and its browser dependencies. After installing Playwright, run the tests using the Playwright test command. All tests should pass before deployment.
-
-# Docker Hub Repository
-   The Docker image for this project is available on Docker Hub. The GitHub Actions pipeline builds the image and pushes it automatically after all tests pass. You can pull the image directly from the repository and run it using Docker.
